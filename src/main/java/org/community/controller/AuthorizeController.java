@@ -11,7 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @Controller
@@ -20,7 +22,7 @@ public class AuthorizeController {
     @Autowired
     private GithubProvider githubProvider;
 
-    @Autowired
+    @Autowired(required = false)
     private UserMapper userMapper;
 
     @Value("${github.client.id}")
@@ -33,9 +35,9 @@ public class AuthorizeController {
     private String redirectUrl;
 
     @GetMapping("/callback")
-    public String callback(@RequestParam(name = "code")String code,
-                           @RequestParam(name = "state")String state,
-                           HttpServletRequest request){
+    public String callback(@RequestParam(name = "code") String code,
+                           @RequestParam(name = "state") String state,
+                           HttpServletResponse response) {
         AcceseTokenDTO accessToDTO = new AcceseTokenDTO();
         accessToDTO.setClient_id(clientId);
         accessToDTO.setClient_secret(clientSecret);
@@ -44,18 +46,19 @@ public class AuthorizeController {
         accessToDTO.setState(state);
         String accessToken = githubProvider.getAccessToken(accessToDTO);
         GithubUser githubUser = githubProvider.getUser(accessToken);
-        if(githubUser != null){
+        if (githubUser != null) {
             User user = new User();
+            String token = UUID.randomUUID().toString();
+            System.out.println(token);
+            user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId()));
-            user.setToken(UUID.randomUUID().toString());
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             userMapper.insert(user);
-            //登录成功，写cookie和session
-            request.getSession().setAttribute("user", githubUser);
+            response.addCookie(new Cookie("token", token));
             return "redirect:/";
-        }else {
+        } else {
             //登录失败，重新登录
             return "redirect:/";
         }
