@@ -3,6 +3,7 @@ package org.community.dot;
 public class GithubUser {
     private String name;
     private Long id;
+    private String bio;
 
     public String getName() {
         return name;
@@ -28,7 +29,15 @@ public class GithubUser {
         this.bio = bio;
     }
 
-    private String bio;
 
+
+    @Override
+    public String toString() {
+        return "GithubUser{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", bio='" + bio + '\'' +
+                '}';
+    }
 
 }
