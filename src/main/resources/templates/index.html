@@ -5,6 +5,7 @@
     <title>社区</title>
     <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.css"/>
     <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap-theme.css"/>
+    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/community.css"/>
     <script src="jquery-3.4.1\jquery-3.4.1.js"></script>
     <script src="bootstrap-3.3.7-dist/js/bootstrap.js" type="application/javascript"></script>
 </head>
@@ -46,5 +47,27 @@
         </div>
     </div>
 </nav>
+<div class="container-fluid main">
+    <div class="row">
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+            <h2><span class="glyphicon glyphicon-list" aria-hidden="true"></span>发现</h2><br>
+            <div class="media" th:each="question : ${questions}">
+                <div class="media-left">
+                    <a href="#">
+                        <img class="media-object img-rounded" th:src="${question.user.getAvatarUrl()}" alt="...">
+                    </a>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading" th:text="${question.getTitle()}"></h4>
+                    <span th:text="${question.getDescription()}"></span><br>
+                    <span class="test_desc"><span th:text="${question.getCommentCount()}"></span>个回复 · <span th:text="${question.getViewCount()}"></span>次浏览 · <span th:text="${#dates.format(question.getGmtCreate(),'dd MMMM yyyy')}"></span></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+            <h3>热门话题</h3>
+        </div>
+    </div>
+</div>
 </body>
 </html>
